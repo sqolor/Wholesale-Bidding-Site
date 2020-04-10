@@ -24,7 +24,7 @@
 
                     <div class="row gtr-uniform">
                       <div class="col-6 col-12-xsmall">
-                        <h2>User Name</h2>
+                        <h2 id="h2">User Name</h2>
                       </div>
                       <div class="col-6 col-12-xsmall">
                         <p>Username Email</p>
@@ -143,6 +143,12 @@
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
+			<script>
+			var decodedCookie = decodeURIComponent(document.cookie);
+			var split=decodedCookie.split('"');
+			var username=split[3];
+			document.getElementById("h2").innerHTML = username;
 
+			</script>
 	</body>
 </html>

@@ -15,7 +15,8 @@ app.use(express.static(publicDir));
 app.listen(8080,  function() {
     console.log('app listening on port 8080!');
 });
-
+var cookieParser = require('cookie-parser');
+app.use(cookieParser());
 app.use(session({
     secret: 'ssshhhhh',
     saveUninitialized: false,
@@ -51,6 +52,10 @@ app.post('/login',function(req,res,next){
     else{
       req.session.username=obj.username;
       console.log('User '+req.session.username+' logged in');
+      let usercookie ={
+      username : req.session.username
+    };
+    res.cookie("usercookie", usercookie);
       res.redirect('/');
     }
   });
@@ -60,7 +65,6 @@ app.get('/userpage',function(req,res,next){
     res.redirect('login.html');
   }
   else{
-    res.send('username ' + req.session.username);
     res.redirect('userinfo.html');
   }
 });
