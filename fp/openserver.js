@@ -42,6 +42,23 @@ app.post('/signup',function(req,res,next){
     res.redirect('/');
   });
 });
+app.post('/addauction',function(req,res,next){
+  let id='1234234';
+  let auctionName =req.body.demo_name;
+  let desc = req.body.demo_desc;
+  let bid= req.body.demo_bid;
+  client.hmset(id,[
+    'auctionName',auctionName,
+    'desc',desc,
+    'bid',bid,
+  ],function(err,reply){
+    if(err){
+      console.log(err);
+    }
+    console.log(reply);
+    res.redirect('/');
+  });
+});
 app.post('/login',function(req,res,next){
   let username =req.body.demo_name;
   let password = req.body.demo_password;
