@@ -1,4 +1,5 @@
 var http = require('http');
+const util = require('util');
 var fs = require('fs');
 var express = require('express');
 var session = require('express-session');
@@ -8,6 +9,8 @@ var client    = redis.createClient();1
 client.on('connect',function(){
   console.log('redis client connected');
 })
+let auctionNum="auctionNum"
+client.set(auctionNum,1);
 var app = express();
 app.use(bodyParser.urlencoded());
 var publicDir = require('path').join(__dirname,'');
@@ -43,7 +46,16 @@ app.post('/signup',function(req,res,next){
   });
 });
 app.post('/addauction',function(req,res,next){
-  let id='1234234';
+  let id=client.get("auctionNum", function (error, obj) {
+    if(!obj){
+      console.log("Error: auctionNum doesnt exist");
+    }
+    else{
+      console.log(util.inspect(obj, {depth: null}));
+
+    }
+  })
+
   let auctionName =req.body.demo_name;
   let desc = req.body.demo_desc;
   let bid= req.body.demo_bid;
@@ -56,6 +68,7 @@ app.post('/addauction',function(req,res,next){
       console.log(err);
     }
     console.log(reply);
+    client.set("auctionNum",id+1);
     res.redirect('/');
   });
 });
