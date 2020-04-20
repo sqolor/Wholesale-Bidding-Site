@@ -55,14 +55,28 @@ app.post('/addauction',function(req,res,next){
 
     }
   })
-
+  let hd = req.body.hd;
+  let c=req.body.hd;
+  let t =req.body.t;
   let auctionName =req.body.demo_name;
   let desc = req.body.demo_desc;
   let bid= req.body.demo_bid;
-  client.hmset(id,[
+  let user = req.session.username;
+  let auctionkey=user+id;
+  if(c==true){
+    auctionkey=auctionkey+"c";
+  }
+  if(hd==true){
+    auctionkey=auctionkey+"h";
+  }
+  if(t==true){
+    auctionkey=auctionkey+"t";
+  }
+  client.hmset(auctionkey,[
     'auctionName',auctionName,
     'desc',desc,
     'bid',bid,
+    'username',user
   ],function(err,reply){
     if(err){
       console.log(err);
@@ -97,4 +111,15 @@ app.get('/userpage',function(req,res,next){
   else{
     res.redirect('userinfo.html');
   }
+});
+app.get('/addauction',function(req,res,next){
+  if(!req.session.username){
+    res.redirect('login.html');
+  }
+  else{
+    res.redirect('addauction.html');
+  }
+});
+app.post('/search',function(req,res,next){
+  
 });
