@@ -23,13 +23,13 @@
                 <!-- Form -->
                 <h3>Search</h3>
                 <section id="search" class="alt">
-                  <form method="post" action="#">
+                  <form method="post" action="/search">
                     <input type="text" name="query" id="query" placeholder="Search" />
                   </form>
                 </section>
                 <h4>Default</h4>
                 <div class="table-wrapper">
-                  <table>
+                  <table id="searchTable" name="searchTable">
                     <thead>
                       <tr>
                         <th>Name</th>
@@ -159,6 +159,17 @@
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
-
+			<script>
+			$.ajax({
+            type: "POST", //rest Type
+            dataType: 'jsonp', //mispelled
+            url: "/searchresult",
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            success: function (msg) {
+                console.log(msg);
+            }
+ });
+			</script>
 	</body>
 </html>

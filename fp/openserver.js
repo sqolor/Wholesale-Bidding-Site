@@ -5,7 +5,9 @@ var express = require('express');
 var session = require('express-session');
 var bodyParser = require('body-parser');
 var redis = require('redis');
-var client    = redis.createClient();1
+var redis_json=require('redis-json');
+var client    = redis.createClient();
+var respone="";
 client.on('connect',function(){
   console.log('redis client connected');
 })
@@ -25,7 +27,6 @@ app.use(session({
     saveUninitialized: false,
     resave: false
 }));
-
 app.post('/signup',function(req,res,next){
   let id='1';
   let username =req.body.demo_name;
@@ -46,45 +47,47 @@ app.post('/signup',function(req,res,next){
   });
 });
 app.post('/addauction',function(req,res,next){
-  let id=client.get("auctionNum", function (error, obj) {
-    if(!obj){
-      console.log("Error: auctionNum doesnt exist");
-    }
-    else{
-      console.log(util.inspect(obj, {depth: null}));
-
-    }
-  })
-  let hd = req.body.hd;
-  let c=req.body.hd;
-  let t =req.body.t;
-  let auctionName =req.body.demo_name;
-  let desc = req.body.demo_desc;
-  let bid= req.body.demo_bid;
-  let user = req.session.username;
-  let auctionkey=user+id;
-  if(c==true){
-    auctionkey=auctionkey+"c";
-  }
-  if(hd==true){
-    auctionkey=auctionkey+"h";
-  }
-  if(t==true){
-    auctionkey=auctionkey+"t";
-  }
-  client.hmset(auctionkey,[
-    'auctionName',auctionName,
-    'desc',desc,
-    'bid',bid,
-    'username',user
-  ],function(err,reply){
-    if(err){
-      console.log(err);
-    }
-    console.log(reply);
-    client.set("auctionNum",id+1);
-    res.redirect('/');
+  var id;
+  let auctionNum="auctionNum";
+  client.get('auctionNum', function (error, result) {
+      if (error) {
+          console.log(error);
+          throw error;
+      }
+      id=result;
+      let hd = req.body.hd;
+      let c=req.body.c;
+      let t =req.body.t;
+      let auctionName =req.body.demo_name;
+      let desc = req.body.demo_desc;
+      let bid= req.body.demo_bid;
+      let user = req.session.username;
+      let auctionkey=user+id;
+      if(req.body.c){
+        auctionkey=auctionkey+"c";
+      }
+      if(req.body.hd){
+        auctionkey=auctionkey+"h";
+      }
+      if(req.body.t){
+        auctionkey=auctionkey+"t";
+      }
+    console.log(util.inspect(auctionkey, {depth: null}));
+    client.hmset(auctionkey,[
+        'auctionName',auctionName,
+        'desc',desc,
+        'bid',bid,
+        'username',user
+      ],function(err,reply){
+        if(err){
+          console.log(err);
+        }
+        console.log(reply);
+        client.set("auctionNum",id+1);
+        res.redirect('/');
+      });
   });
+
 });
 app.post('/login',function(req,res,next){
   let username =req.body.demo_name;
@@ -92,6 +95,7 @@ app.post('/login',function(req,res,next){
   client.hgetall(username,function(err,obj){
     if(!obj){
       console.log('User doesnt exist');
+      res.redirect('login.html');
     }
     else{
       req.session.username=obj.username;
@@ -121,5 +125,47 @@ app.get('/addauction',function(req,res,next){
   }
 });
 app.post('/search',function(req,res,next){
-  
+  let query = req.body.query;
+  let rsp;
+  client.keys("*"+query+"*",function(err,obj){
+    if(!obj){
+      console.log('Search Empty');
+      res.redirect('search.html');
+    }
+    else{
+      let keys=obj;
+      //req.session.rsp="{";
+      for(var i = 0, len = keys.length; i < len; i++) {
+        client.hgetall(keys[i],function(err,result){
+          if(!result){
+            console.log('Error during search keys');
+          }
+          else {
+            console.log(util.inspect(result, {depth: null}));
+          //  req.session.rsp=req.session.rsp+"{";
+            foo=util.inspect(result, {depth: null});
+            if(!req.session.rsp){
+              req.session.rsp=foo;
+              respone=foo;
+            }
+            else {
+              req.session.rsp=req.session.rsp + foo;
+              respone=respone+foo;
+            }
+            //req.session.rsp=req.session.rsp+"}";
+          }
+        });
+ }
+// req.session.rsp=req.session.rsp+"}";
+req.session.save();
+    res.redirect('search.html');
+    }
+
+});
+});
+app.post('/searchresult',function(req,res,next) {
+  console.log(req.session.rsp);
+  console.log(util.inspect(req.session.rsp, {depth: null}));
+  r=respone;
+  res.json(r);
 });
