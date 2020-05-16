@@ -134,7 +134,7 @@ app.post('/search',function(req,res,next){
     }
     else{
       let keys=obj;
-      //req.session.rsp="{";
+      console.log(util.inspect(keys, {depth: null}));
       for(var i = 0, len = keys.length; i < len; i++) {
         client.hgetall(keys[i],function(err,result){
           if(!result){
@@ -142,21 +142,22 @@ app.post('/search',function(req,res,next){
           }
           else {
             console.log(util.inspect(result, {depth: null}));
-          //  req.session.rsp=req.session.rsp+"{";
             foo=util.inspect(result, {depth: null});
             if(!req.session.rsp){
               req.session.rsp=foo;
               respone=foo;
+              req.session.rsp=req.session.rsp+",";
+              respone=respone+",";
             }
             else {
               req.session.rsp=req.session.rsp + foo;
               respone=respone+foo;
+              req.session.rsp=req.session.rsp+",";
+              respone=respone+",";
             }
-            //req.session.rsp=req.session.rsp+"}";
           }
         });
  }
-// req.session.rsp=req.session.rsp+"}";
 req.session.save();
     res.redirect('search.html');
     }

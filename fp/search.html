@@ -29,7 +29,7 @@
                 </section>
                 <h4>Default</h4>
                 <div class="table-wrapper">
-                  <table id="searchTable" name="searchTable">
+                  <table id="searchTable" name="searchTable" data={this.table.data}>
                     <thead>
                       <tr>
                         <th>Name</th>
@@ -159,6 +159,8 @@
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
+			<script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+      <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
 			<script>
 			$.ajax({
             type: "POST", //rest Type
@@ -168,8 +170,32 @@
             contentType: "application/json; charset=utf-8",
             success: function (msg) {
                 console.log(msg);
+			var tableData = '';
+			 var tableId=1;
+			 $.each(data, function(key, value) {
+				 if(key.name="username"){
+
+					 tableData += '<tr id="tableId'+tableId+'" class="">';
+					 tableData += '<td>'+value.username+'</td>';
+					 tableData += '<td>'+value.email+'</td>';
+					 tableData += '</tr>';     }
+				 else {
+					 tableData += '<tr id="tableId'+tableId+'" class="">';
+ 					tableData += '<td>'+value.auctionName+'</td>';
+ 					tableData += '<td>'+value.username+'</td>';
+ 					tableData += '</tr>';
+				 }
+			 });
+
+			 // We use .html instead of .append here, to make sure we don't add the same
+			 // entries when the interval is ran for the n-th time.
+			 $('#searchTable').html(tableData);
+
             }
  });
 			</script>
+		<script>
+
+		</script>
 	</body>
 </html>
