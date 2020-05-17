@@ -146,14 +146,14 @@ app.post('/search',function(req,res,next){
             if(!req.session.rsp){
               req.session.rsp=foo;
               respone=foo;
-              req.session.rsp=req.session.rsp+",";
-              respone=respone+",";
+
             }
             else {
-              req.session.rsp=req.session.rsp + foo;
-              respone=respone+foo;
               req.session.rsp=req.session.rsp+",";
               respone=respone+",";
+              req.session.rsp=req.session.rsp + foo;
+              respone=respone+foo;
+
             }
           }
         });

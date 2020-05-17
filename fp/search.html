@@ -32,42 +32,18 @@
                   <table id="searchTable" name="searchTable" data={this.table.data}>
                     <thead>
                       <tr>
-                        <th>Name</th>
+                        <th>Result Number</th>
                         <th>Description</th>
-                        <th>Price</th>
+                        <th>Go To</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>Item1</td>
-                        <td>Ante turpis integer aliquet porttitor.</td>
-                        <td>29.99</td>
-                      </tr>
-                      <tr>
-                        <td>Item2</td>
-                        <td>Vis ac commodo adipiscing arcu aliquet.</td>
-                        <td>19.99</td>
-                      </tr>
-                      <tr>
-                        <td>Item3</td>
-                        <td> Morbi faucibus arcu accumsan lorem.</td>
-                        <td>29.99</td>
-                      </tr>
-                      <tr>
-                        <td>Item4</td>
-                        <td>Vitae integer tempus condimentum.</td>
-                        <td>19.99</td>
-                      </tr>
-                      <tr>
-                        <td>Item5</td>
-                        <td>Ante turpis integer aliquet porttitor.</td>
-                        <td>29.99</td>
-                      </tr>
+
                     </tbody>
                     <tfoot>
                       <tr>
                         <td colspan="2"></td>
-                        <td>100.00</td>
+                        <td>No More Results</td>
                       </tr>
                     </tfoot>
                   </table>
@@ -164,15 +140,17 @@
 			<script>
 			$.ajax({
             type: "POST", //rest Type
-            dataType: 'jsonp', //mispelled
+            //dataType: 'jsonp', //mispelled
+						dataType: 'text', //mispelled
             url: "/searchresult",
             async: false,
             contentType: "application/json; charset=utf-8",
-            success: function (msg) {
-                console.log(msg);
+            success: function (data) {
 			var tableData = '';
 			 var tableId=1;
-			 $.each(data, function(key, value) {
+			 var result = data.substring(1, data.length-1);
+			 result=result.split("(},)");
+		/*	 $.each(JSON.parse(result), function(key, value) {
 				 if(key.name="username"){
 
 					 tableData += '<tr id="tableId'+tableId+'" class="">';
@@ -185,13 +163,28 @@
  					tableData += '<td>'+value.username+'</td>';
  					tableData += '</tr>';
 				 }
+			 });*/
+			 result.forEach((item, i) => {
+				 j=i+1;
+				 tableData += '<tr id="tableId'+i+'" class="">';
+				 tableData += '<td>'+j+'</td>';
+				 tableData += '<td>'+item+'</td>';
+				 tableData += '<td>'+'<a href="#" class="button">Here</a>'+'</td>';
+				 tableData += '</tr>';
 			 });
+
+			 console.log(tableData);
 
 			 // We use .html instead of .append here, to make sure we don't add the same
 			 // entries when the interval is ran for the n-th time.
-			 $('#searchTable').html(tableData);
+			 //$('#searchTable').html(tableData);
+			 $('#searchTable').append(tableData);
 
-            }
+		 },
+		 error: function (xhr, error) {
+		 console.debug(xhr);
+		 console.debug(error);
+	 }
  });
 			</script>
 		<script>
