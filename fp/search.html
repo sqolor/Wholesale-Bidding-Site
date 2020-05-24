@@ -146,10 +146,11 @@
             async: false,
             contentType: "application/json; charset=utf-8",
             success: function (data) {
+							if(data!=undefined){
 			var tableData = '';
 			 var tableId=1;
 			 var result = data.substring(1, data.length-1);
-			 result=result.split("(},)");
+			 result=result.split("},");
 		/*	 $.each(JSON.parse(result), function(key, value) {
 				 if(key.name="username"){
 
@@ -167,9 +168,13 @@
 			 result.forEach((item, i) => {
 				 j=i+1;
 				 tableData += '<tr id="tableId'+i+'" class="">';
-				 tableData += '<td>'+j+'</td>';
-				 tableData += '<td>'+item+'</td>';
-				 tableData += '<td>'+'<a href="#" class="button">Here</a>'+'</td>';
+				 tableData += '<td  value="'+j+'">'+j+'</td>';
+				 tableData += '<td id="tableData'+j+'" name="tableData'+j+'">'+item+'</td>';
+				 if(item.includes('auctionName')){
+					 splitItem=item.split(/[\s:]+/);
+					 console.log(splitItem);
+				 }
+				 tableData += '<td>'+'<a href="#" name="searchButton'+j+'" id="searchButton'+j+'" class="button">Here</a>'+'</td>';
 				 tableData += '</tr>';
 			 });
 
@@ -179,7 +184,31 @@
 			 // entries when the interval is ran for the n-th time.
 			 //$('#searchTable').html(tableData);
 			 $('#searchTable').append(tableData);
+			 $.ajax({
+				 type: "POST", //rest Type
+				 //dataType: 'jsonp', //mispelled
+				 dataType: 'text', //mispelled
+				 url: "/keysresult",
+				 async: false,
+				 contentType: "application/json; charset=utf-8",
+				 success: function (rsp){
+					 console.log(rsp);
 
+					 $.each(JSON.parse(rsp), function(index,value) {
+						 k=index+1;
+						 var bar="tableData"+k;
+						 var r = $("#searchTable #"+bar).text();
+						 if (r.indexOf("auctionName:") >= 0){
+							 console.log(value);
+							 $("#searchTable #searchButton"+k).attr("href", '/getauction?auctionname='+value+'');
+						 }
+						 else {
+							 $("#searchTable #searchButton"+k).attr("href", '/getuser?username='+value+'');
+						 }
+         });
+				 }
+			 });
+}
 		 },
 		 error: function (xhr, error) {
 		 console.debug(xhr);

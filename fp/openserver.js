@@ -8,10 +8,11 @@ var redis = require('redis');
 var redis_json=require('redis-json');
 var client    = redis.createClient();
 var respone="";
+var searchKeys;
 client.on('connect',function(){
   console.log('redis client connected');
 })
-let auctionNum="auctionNum"
+let auctionNum="auctionNum";
 client.set(auctionNum,1);
 var app = express();
 app.use(bodyParser.urlencoded());
@@ -124,6 +125,7 @@ app.get('/addauction',function(req,res,next){
     res.redirect('addauction.html');
   }
 });
+var tempkey;
 app.post('/search',function(req,res,next){
   let query = req.body.query;
   let rsp;
@@ -134,14 +136,16 @@ app.post('/search',function(req,res,next){
     }
     else{
       let keys=obj;
+      searchKeys=obj;
       console.log(util.inspect(keys, {depth: null}));
       for(var i = 0, len = keys.length; i < len; i++) {
+        tempkey=keys[i];
         client.hgetall(keys[i],function(err,result){
           if(!result){
             console.log('Error during search keys');
           }
           else {
-            console.log(util.inspect(result, {depth: null}));
+            //foo=tempkey;
             foo=util.inspect(result, {depth: null});
             if(!req.session.rsp){
               req.session.rsp=foo;
@@ -153,7 +157,6 @@ app.post('/search',function(req,res,next){
               respone=respone+",";
               req.session.rsp=req.session.rsp + foo;
               respone=respone+foo;
-
             }
           }
         });
@@ -169,4 +172,27 @@ app.post('/searchresult',function(req,res,next) {
   console.log(util.inspect(req.session.rsp, {depth: null}));
   r=respone;
   res.json(r);
+});
+app.get('/getauction',function(req,res,next){
+  auctionName= req.query.auctionname;
+  client.hgetall(auctionName,function(err,obj){
+    if(!obj){
+      console.log('Null Auction');
+      res.redirect('index.html');
+    }
+    else {
+      let auctioncookie ={
+      auctionName : obj.auctionName,
+      desc : obj.desc,
+      bid : obj.bid,
+      userName : obj.userName
+    };
+    res.cookie("auctioncookie", auctioncookie);
+      res.redirect('/auctionpage.html');
+    }
+});
+});
+app.post('/keysresult',function(req,res,next) {
+  console.log(util.inspect(searchKeys, {depth: null}));
+  res.json(searchKeys);
 });

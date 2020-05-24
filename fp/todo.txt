@@ -1,0 +1,4 @@
+1: Finish bidding system
+2: Push alert for addauction
+3: Bidding engine...?
+4: Polish

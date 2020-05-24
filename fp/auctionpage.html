@@ -137,6 +137,13 @@
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
+			<script>
+			var decodedCookie = decodeURIComponent(document.cookie);
+			var split=decodedCookie.split('"');
+			var username=split[3];
+			document.getElementById("h2").innerHTML = username;
+
+			</script>
 
 	</body>
 </html>
