@@ -168,13 +168,12 @@ req.session.save();
 });
 });
 app.post('/searchresult',function(req,res,next) {
-  console.log(req.session.rsp);
-  console.log(util.inspect(req.session.rsp, {depth: null}));
   r=respone;
   res.json(r);
 });
 app.get('/getauction',function(req,res,next){
   auctionName= req.query.auctionname;
+  req.session.currentauction = auctionName;
   client.hgetall(auctionName,function(err,obj){
     if(!obj){
       console.log('Null Auction');
@@ -193,6 +192,8 @@ app.get('/getauction',function(req,res,next){
 });
 });
 app.post('/keysresult',function(req,res,next) {
-  console.log(util.inspect(searchKeys, {depth: null}));
   res.json(searchKeys);
+});
+app.post('/bidonauction',function(req,res,next) {
+// TODO: 
 });

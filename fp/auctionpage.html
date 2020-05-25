@@ -24,10 +24,10 @@
 
                     <div class="row gtr-uniform">
                       <div class="col-6 col-12-xsmall">
-                        <h2>Auction Name</h2>
+                        <h2 id="h2">Auction Name</h2>
                       </div>
                       <div class="col-6 col-12-xsmall">
-                        <p>Auction Username</p>
+                        <p id="p1">Auction Username</p>
                       </div>
                       <!-- Break -->
                       <div class="row gtr-50 gtr-uniform">
@@ -41,9 +41,12 @@
                       <div class="col-12">
                         <div class="col-6 col-12-xsmall">
                         </div>
-                        <p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore aliquam.</p>
+                        <p id="p2">Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore aliquam.</p>
                         <ul class="actions">
-
+													<form method="post" action="/bidonauction">
+													<li><div class="col-6 col-12-xsmall">
+	                          <input type="text" name="demo_name" id="demo_name" value="" placeholder="Enter Bid" />
+	                        </div></li>
                           <li><input type="submit" value="Bid Now!" class="primary" /></li>
 
 
@@ -140,9 +143,12 @@
 			<script>
 			var decodedCookie = decodeURIComponent(document.cookie);
 			var split=decodedCookie.split('"');
-			var username=split[3];
-			document.getElementById("h2").innerHTML = username;
-
+			var auctionname=split[7];
+			document.getElementById("h2").innerHTML = auctionname;
+			var username=split[11];
+			document.getElementById("p1").innerHTML = username;
+			var currentbid=split[15];
+			document.getElementById("p2").innerHTML = "The Current Bid Price is:"+ currentbid;
 			</script>
 
 	</body>
