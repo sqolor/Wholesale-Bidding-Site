@@ -13,6 +13,7 @@ client.on('connect',function(){
   console.log('redis client connected');
 })
 let auctionNum="auctionNum";
+let currentauction="";
 client.set(auctionNum,1);
 var app = express();
 app.use(bodyParser.urlencoded());
@@ -55,7 +56,7 @@ app.post('/addauction',function(req,res,next){
           console.log(error);
           throw error;
       }
-      id=result;
+      id=parseInt(result,10);
       let hd = req.body.hd;
       let c=req.body.c;
       let t =req.body.t;
@@ -174,6 +175,8 @@ app.post('/searchresult',function(req,res,next) {
 app.get('/getauction',function(req,res,next){
   auctionName= req.query.auctionname;
   req.session.currentauction = auctionName;
+  currentauction = auctionName;
+  console.log(currentauction);
   client.hgetall(auctionName,function(err,obj){
     if(!obj){
       console.log('Null Auction');
@@ -195,5 +198,41 @@ app.post('/keysresult',function(req,res,next) {
   res.json(searchKeys);
 });
 app.post('/bidonauction',function(req,res,next) {
-// TODO: 
+  client.keys("*"+currentauction+"*",function(err,obj){
+    if(!obj){
+      console.log('Error: No Auction Found on bid');
+      res.redirect('index.html');
+    }
+    else {
+      if(obj.length==1){
+        client.hmset(req.session.currentauction+"bid1",[
+          'auctionkey',req.session.currentauction,
+          'bidamount',req.body.bidamount,
+          'userName',req.session.username
+        ],function(err,reply){
+          if(err){
+            console.log(err);
+          }
+          console.log(reply);
+          res.redirect('/');
+        });
+      }
+      else {
+        lastbidindex = obj[obj.length-1];
+        lastbidindex = lastbidindex.slice(-1);
+        lastbidindex++;
+        client.hmset(req.session.currentauction+"bid"+lastbidindex,[
+          'auctionkey',req.session.currentauction,
+          'bidamount',req.body.bidamount,
+          'userName',req.session.username
+        ],function(err,reply){
+          if(err){
+            console.log(err);
+          }
+          console.log(reply);
+          res.redirect('/');
+        });
+      }
+    }
+});
 });
