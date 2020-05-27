@@ -151,6 +151,22 @@
 			var currentbid=split[15];
 			document.getElementById("p2").innerHTML = "The Current Bid Price is:"+ currentbid;
 			</script>
-
+			<script>
+			$.ajax({
+            type: "POST", //rest Type
+            //dataType: 'jsonp', //mispelled
+						dataType: 'text', //mispelled
+            url: "/checkhighestbid",
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+							if(data!=undefined){
+								console.log(data);
+								var tempbid=data.split('"');
+								document.getElementById("p2").innerHTML = "The Current Bid Price is:"+ tempbid[7];
+							}
+						}
+					});
+			</script>
 	</body>
 </html>

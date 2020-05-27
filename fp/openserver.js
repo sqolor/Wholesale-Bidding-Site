@@ -146,8 +146,8 @@ app.post('/search',function(req,res,next){
             console.log('Error during search keys');
           }
           else {
-            //foo=tempkey;
             foo=util.inspect(result, {depth: null});
+            if(!foo.includes("bidamount")){
             if(!req.session.rsp){
               req.session.rsp=foo;
               respone=foo;
@@ -159,6 +159,7 @@ app.post('/search',function(req,res,next){
               req.session.rsp=req.session.rsp + foo;
               respone=respone+foo;
             }
+          }
           }
         });
  }
@@ -195,6 +196,7 @@ app.get('/getauction',function(req,res,next){
 });
 });
 app.post('/keysresult',function(req,res,next) {
+  searchKeys.sort((x,y) => x.length - y.length);
   res.json(searchKeys);
 });
 app.post('/bidonauction',function(req,res,next) {
@@ -218,8 +220,11 @@ app.post('/bidonauction',function(req,res,next) {
         });
       }
       else {
+        var temp = obj;
+        temp.sort((x,y) => x.length - y.length);
         lastbidindex = obj[obj.length-1];
         lastbidindex = lastbidindex.slice(-1);
+        lastbidindex = parseInt(lastbidindex, 10);
         lastbidindex++;
         client.hmset(req.session.currentauction+"bid"+lastbidindex,[
           'auctionkey',req.session.currentauction,
@@ -233,6 +238,26 @@ app.post('/bidonauction',function(req,res,next) {
           res.redirect('/');
         });
       }
+    }
+});
+});
+app.post('/checkhighestbid',function(req,res,next) {
+  client.keys("*"+req.session.currentauction+"*",function(err,obj){
+    if(!obj){
+      console.log('Error: No Bid Found on Auction');
+    }
+    else {
+      var temp = obj;
+      temp.sort((x,y) => x.length - y.length);
+      i=obj.length;
+      client.hgetall(temp[i-1],function(err,result){
+        if(err){
+          console.log(err);
+        }
+        else {
+          res.json(result);
+        }
+      });
     }
 });
 });

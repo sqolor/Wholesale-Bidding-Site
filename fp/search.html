@@ -198,7 +198,7 @@
 						 k=index+1;
 						 var bar="tableData"+k;
 						 var r = $("#searchTable #"+bar).text();
-						 if (r.indexOf("auctionName:") >= 0){
+						 if (r.indexOf("auctionName:") >= 0 ){
 							 console.log(value);
 							 $("#searchTable #searchButton"+k).attr("href", '/getauction?auctionname='+value+'');
 						 }
@@ -216,8 +216,5 @@
 	 }
  });
 			</script>
-		<script>
-
-		</script>
 	</body>
 </html>
