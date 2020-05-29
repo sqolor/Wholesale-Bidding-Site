@@ -1,22 +1,29 @@
-var http = require('http');
+const http = require('http');
 const util = require('util');
-var fs = require('fs');
-var express = require('express');
-var session = require('express-session');
-var bodyParser = require('body-parser');
-var redis = require('redis');
-var redis_json=require('redis-json');
+const fs = require('fs');
+const express = require('express');
+const session = require('express-session');
+const bodyParser = require('body-parser');
+const redis = require('redis');
+const redis_json=require('redis-json');
+const webpush=require('web-push');
 var client    = redis.createClient();
 var respone="";
 var searchKeys;
 client.on('connect',function(){
   console.log('redis client connected');
 })
+var publicKey= "BKjvEZrMTvM5e_RF4dTsohQZWzxT-7S6Bfn4JdWbkrvNhkIhdorYfxoFm4xZthhrt1NYHXwE-bYo2AP6_3bKISE";
+var privateKey= "5712Xsr-D_X-hzWo1_vhvDpOFlNrYRSwZWYJ0bncaGw";
 let auctionNum="auctionNum";
+webpush.setVapidDetails('mailto:example@yourdomain.org',publicKey,privateKey);
 let currentauction="";
 client.set(auctionNum,1);
 var app = express();
-app.use(bodyParser.urlencoded());
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+app.use(bodyParser.json());
 var publicDir = require('path').join(__dirname,'');
 app.use(express.static(publicDir));
 app.listen(8080,  function() {
@@ -260,4 +267,13 @@ app.post('/checkhighestbid',function(req,res,next) {
       });
     }
 });
+});
+app.post('/subscribe',function(req,res,next){
+  const subscription = req.body;
+  res.status(201).json({});
+  const payload = JSON.stringify({title : 'push test'});
+  console.log("Sending push");
+  console.log(subscription);
+  webpush.sendNotification(subscription,payload).catch(err=>console.error(err));
+
 });
