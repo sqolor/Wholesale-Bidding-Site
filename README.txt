@@ -1,0 +1,1 @@
+Wholesale bidding is a system of creating auctions to allow smaller and disadvantaged businesses to get the best and foremost bargain for required goods and services. The system works similarly to ebay, by way of creating auctions.

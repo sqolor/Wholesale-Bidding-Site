@@ -18,6 +18,9 @@ var privateKey= "5712Xsr-D_X-hzWo1_vhvDpOFlNrYRSwZWYJ0bncaGw";
 let auctionNum="auctionNum";
 webpush.setVapidDetails('mailto:example@yourdomain.org',publicKey,privateKey);
 let currentauction="";
+var cflag=false;
+var hdflag = false;
+var tflag=false;
 client.set(auctionNum,1);
 var app = express();
 app.use(bodyParser.urlencoded({
@@ -74,12 +77,15 @@ app.post('/addauction',function(req,res,next){
       let auctionkey=user+id;
       if(req.body.c){
         auctionkey=auctionkey+"c";
+        cflag=true;
       }
       if(req.body.hd){
         auctionkey=auctionkey+"h";
+        hdflag=true;
       }
       if(req.body.t){
         auctionkey=auctionkey+"t";
+        tflag=true;
       }
     console.log(util.inspect(auctionkey, {depth: null}));
     client.hmset(auctionkey,[
@@ -269,11 +275,40 @@ app.post('/checkhighestbid',function(req,res,next) {
 });
 });
 app.post('/subscribe',function(req,res,next){
+  var title = "No New Auctions";
+  if(cflag) title="New Construction Auctions";
+  if(hdflag) title="New Home Design Auctions";
+  if(tflag) title="New Technology Auctions";
   const subscription = req.body;
   res.status(201).json({});
-  const payload = JSON.stringify({title : 'push test'});
+  const payload = JSON.stringify({title : title});
   console.log("Sending push");
   console.log(subscription);
   webpush.sendNotification(subscription,payload).catch(err=>console.error(err));
 
+});
+app.post('/subscribepush',function(req,res,next){
+  let hd = req.body.hd;
+  let c=req.body.c;
+  let t =req.body.t;
+  if(hd){
+    client.sadd( "homedesign", req.session.username, function(err,res) {
+         console.log("subscribed user to homedesign");
+
+
+      });
+  }
+  else if (c) {
+    client.sadd( "construction", req.session.username, function(err,res) {
+         console.log("subscribed user to construction");
+
+      });
+  }
+  else if (t) {
+    client.sadd( "technology", req.session.username, function(err,res) {
+         console.log("subscribed user to technology");
+
+      });
+      res.redirect('/');
+  }
 });
