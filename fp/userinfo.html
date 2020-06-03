@@ -32,7 +32,10 @@
                       <!-- Break -->
                       <div class="row gtr-50 gtr-uniform">
                       <div class="col-12 col-4-xsmall">
-                        <img src="images/pic01.jpg" alt="" />
+                        <img src="images/pic01.jpg" alt="" id="userimage" style="vertical-align: middle;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;"/>
                       </div>
                       </div>
 
@@ -80,8 +83,20 @@
 									</div>
 
 							</form>
+							<form method="post" action="/uploaduserimage" name="uploaduserimage" id="uploaduserimage" enctype="multipart/form-data">
+									<div class="col-12">
+										<div class="col-3 col-12-small">
+											<input type="file" id="files" name="files" accept="image/png, image/jpeg">
+											<label for="files">Upload User Image</label>
+										</div>
+										<ul class="actions">
+
+											<li><input type="submit" value="Edit Info" class="primary" /></li>
 
 
+									</div>
+
+							</form>
 
               </section>
 
@@ -94,7 +109,7 @@
 
 							<!-- Search -->
 								<section id="search" class="alt">
-									<form method="post" action="#">
+									<form method="post" action="/search">
 										<input type="text" name="query" id="query" placeholder="Search" />
 									</form>
 								</section>
@@ -174,6 +189,23 @@
 			var username=split[3];
 			document.getElementById("h2").innerHTML = username;
 
+			</script>
+			<script>
+			$.ajax({
+            type: "POST", //rest Type
+            //dataType: 'jsonp', //mispelled
+						dataType: 'text', //mispelled
+            url: "/getimage",
+            async: false,
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+							if(data!=undefined){
+								console.log(data);
+								var image=data.split('\\');
+								$('#userimage').attr('src', "uploads/"+image[14].slice(0, -1));
+							}
+						}
+					});
 			</script>
 			<script src="clientpush.js"></script>
 	</body>

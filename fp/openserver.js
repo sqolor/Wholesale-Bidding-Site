@@ -6,7 +6,14 @@ const session = require('express-session');
 const bodyParser = require('body-parser');
 const redis = require('redis');
 const redis_json=require('redis-json');
+var path = require('path');
 const webpush=require('web-push');
+var formidable = require('formidable');
+const multer = require("multer");
+const upload = multer({
+  dest: "/userimages"
+  // you might also want to set some limits: https://github.com/expressjs/multer#limits
+});
 var client    = redis.createClient();
 var respone="";
 var searchKeys;
@@ -311,4 +318,58 @@ app.post('/subscribepush',function(req,res,next){
       });
       res.redirect('/');
   }
+});
+
+const handleError = (err, res) => {
+  res
+    .status(500)
+    .contentType("text/plain")
+    .end("Oops! Something went wrong!");
+    console.log(err);
+};
+
+
+app.post("/uploaduserimage",
+  upload.single("files" /* name attribute of <file> element in your form */),
+  (req, res) => {
+    const tempPath = req.file.path;
+    const targetPath = path.join(__dirname, "./uploads/image"+req.session.username+".png");
+
+    if (path.extname(req.file.originalname).toLowerCase() === ".png") {
+      fs.rename(tempPath, targetPath, err => {
+        if (err) return handleError(err, res);
+        client.hmset(req.session.username,[
+          'userphoto', targetPath
+        ],function(err,reply){
+          if(err){
+            console.log(err);
+          }
+          req.session.userphoto=targetPath;
+          console.log(reply);
+        });
+        res.redirect('/');
+      });
+    } else {
+      fs.unlink(tempPath, err => {
+        if (err) return handleError(err, res);
+
+        res
+          .status(403)
+          .contentType("text/plain")
+          .end("Only .png files are allowed!");
+      });
+    }
+  }
+);
+app.post('/getimage',function(req,res,next){
+  client.hgetall(req.session.username,function(err,obj){
+    if(!obj){
+      console.log('User doesnt exist');
+      res.redirect('login.html');
+    }
+    else{
+      req.session.userphoto=obj.userphoto;
+      res.json(req.session.userphoto);
+    }
+  });
 });
