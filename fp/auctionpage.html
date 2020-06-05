@@ -32,12 +32,12 @@
                       <!-- Break -->
                       <div class="row gtr-50 gtr-uniform">
                       <div class="col-12 col-4-xsmall">
-                        <img src="images/pic01.jpg" alt="" />
+                        <img src="images/pic07.jpg" alt="" />
                       </div>
                       </div>
 
                       <!-- Break -->
-                  <form method="post" action="/bidonauction">
+                  <form method="post" action="/bidonauction" id="bidform">
                       <div class="col-12">
                         <div class="col-6 col-12-xsmall">
                         </div>
@@ -84,13 +84,13 @@
 											<span class="opener">My User</span>
 											<ul>
                         <li><a href="userinfo.html">Update Info</a></li>
-												<li><a href="#">My Auctions</a></li>
+												<li><a href="/addauction">Add Auction</a></li>
 												<li><a href="#">My Customers</a></li>
 												<li><a href="#">My Bids</a></li>
 											</ul>
 										</li>
 										<li><a href="search.html">Search Page</a></li>
-										<li><a href="#">About Us</a></li>
+										<li><a href="aboutus.html">About Us</a></li>
 
 									</ul>
 								</nav>
@@ -118,7 +118,7 @@
 									</header>
 									<p>Get in contact with our customer support service!</p>
 									<ul class="contact">
-										<li class="icon solid fa-envelope"><a href="#">information@untitled.tld</a></li>
+										<li class="icon solid fa-envelope"><a href="mailto:information@untitled.tld">information@untitled.tld</a></li>
 										<li class="icon solid fa-phone">(000) 000-0000</li>
 										<li class="icon solid fa-home">1234 Somewhere Road #8254<br />
 										Nashville, TN 00000-0000</li>
@@ -142,14 +142,14 @@
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
 			<script>
-			var decodedCookie = decodeURIComponent(document.cookie);
+		  var decodedCookie = decodeURIComponent(document.cookie);
 			var split=decodedCookie.split('"');
 			var auctionname=split[7];
 			document.getElementById("h2").innerHTML = auctionname;
 			var username=split[11];
 			document.getElementById("p1").innerHTML = username;
 			var currentbid=split[15];
-			document.getElementById("p2").innerHTML = "The Current Bid Price is:"+ currentbid;
+			document.getElementById("p2").innerHTML = "The Current Bid Price is: "+ currentbid;
 			</script>
 			<script>
 			$.ajax({
@@ -160,13 +160,25 @@
             async: false,
             contentType: "application/json; charset=utf-8",
             success: function (data) {
-							if(data!=undefined){
+							if(data!=undefined && data.includes('auctionkey')){
 								console.log(data);
 								var tempbid=data.split('"');
-								document.getElementById("p2").innerHTML = "The Current Bid Price is:"+ tempbid[7];
+								document.getElementById("p2").innerHTML = "The Current Bid Price is: "+ tempbid[7];
 							}
 						}
 					});
+			</script>
+			<script>
+			$('#bidform').submit(function() {
+				bidtext = 	document.getElementById("p2").innerHTML
+				bidtext = bidtext.split(' ');
+				initialbid = bidtext[bidtext.length-1];
+				var currentbid = $('#bidamount').val();
+				if(initialbid>currentbid){
+					alert('Bid amount must be larger than the current bid!');
+					return false;
+				}
+});
 			</script>
 	</body>
 </html>

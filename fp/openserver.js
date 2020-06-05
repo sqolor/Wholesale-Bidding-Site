@@ -216,7 +216,7 @@ app.get('/getauction',function(req,res,next){
 });
 });
 app.post('/keysresult',function(req,res,next) {
-  searchKeys.sort((x,y) => x.length - y.length);
+  //searchKeys.sort((x,y) => x.length - y.length);
   res.json(searchKeys);
 });
 app.post('/bidonauction',function(req,res,next) {
@@ -255,7 +255,7 @@ app.post('/bidonauction',function(req,res,next) {
             console.log(err);
           }
           console.log(reply);
-          res.redirect('/');
+          res.redirect('/auctionpage.html?auctionname='+req.session.currentauction);
         });
       }
     }
@@ -274,7 +274,7 @@ app.post('/checkhighestbid',function(req,res,next) {
         if(err){
           console.log(err);
         }
-        else {
+        else if(result) {
           res.json(result);
         }
       });
