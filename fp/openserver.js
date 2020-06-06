@@ -96,10 +96,7 @@ app.post('/addauction',function(req,res,next){
       }
     console.log(util.inspect(auctionkey, {depth: null}));
     client.hmset(auctionkey,[
-        'auctionName',auctionName,
-        'desc',desc,
-        'bid',bid,
-        'username',user
+        'auctionName',auctionName,'desc',desc,'bid',bid,'username',user
       ],function(err,reply){
         if(err){
           console.log(err);
@@ -148,7 +145,19 @@ app.get('/addauction',function(req,res,next){
 });
 var tempkey;
 app.post('/search',function(req,res,next){
-  let query = req.body.query;
+  let query = "";
+  if (req.body.query="home design") {
+    query = "h";
+  }
+  else if (req.body.query = "construction") {
+    query = "c";
+  }
+  else if (req.body.query="technology") {
+    query = "t";
+  }
+   else {
+     query = req.body.query;
+   }
   let rsp;
   client.keys("*"+query+"*",function(err,obj){
     if(!obj){

@@ -10,6 +10,7 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
+		<link rel="icon" href="logo.ico">
 	</head>
 	<body class="is-preload">
 
@@ -27,7 +28,7 @@
                     <input type="text" name="query" id="query" placeholder="Search" />
                   </form>
                 </section>
-                <h4>Default</h4>
+                <h4>Search Results</h4>
                 <div class="table-wrapper">
                   <table id="searchTable" name="searchTable" data={this.table.data}>
                     <thead>
@@ -151,29 +152,16 @@
 			 var tableId=1;
 			 var result = data.substring(1, data.length-1);
 			 result=result.split("},");
-		/*	 $.each(JSON.parse(result), function(key, value) {
-				 if(key.name="username"){
-
-					 tableData += '<tr id="tableId'+tableId+'" class="">';
-					 tableData += '<td>'+value.username+'</td>';
-					 tableData += '<td>'+value.email+'</td>';
-					 tableData += '</tr>';     }
-				 else {
-					 tableData += '<tr id="tableId'+tableId+'" class="">';
- 					tableData += '<td>'+value.auctionName+'</td>';
- 					tableData += '<td>'+value.username+'</td>';
- 					tableData += '</tr>';
-				 }
-			 });*/
 			 result.forEach((item, i) => {
+				 var tempstring = '';
 				 j=i+1;
 				 tableData += '<tr id="tableId'+i+'" class="">';
 				 tableData += '<td  value="'+j+'">'+j+'</td>';
-				 tableData += '<td id="tableData'+j+'" name="tableData'+j+'">'+item+'</td>';
-				 if(item.includes('auctionName')){
-					 splitItem=item.split(/[\s:]+/);
-					 console.log(splitItem);
-				 }
+				 tempitem = item;
+				 tempitem=tempitem.replace(/(\n{,)\w+/g,'');
+				 tempitem= tempitem.replace({},'');
+				 console.log(tempitem);
+					 tableData += '<td id="tableData'+j+'" name="tableData'+j+'">'+tempitem+'</td>';
 				 tableData += '<td>'+'<a href="#" name="searchButton'+j+'" id="searchButton'+j+'" class="button">Here</a>'+'</td>';
 				 tableData += '</tr>';
 			 });

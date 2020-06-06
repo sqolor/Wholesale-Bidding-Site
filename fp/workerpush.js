@@ -6,13 +6,13 @@ self.addEventListener("push", e => {
   if(data.title.includes("No")){
     self.registration.showNotification(data.title, {
       body: "No New Auctions",
-      icon: "https://www.iconspng.com/images/pepe/pepe.jpg"
+      icon: "logo.ico"
     });
   }
   else {
     self.registration.showNotification(data.title, {
       body: "New Auctions in Your Subscriptions",
-      icon: "https://www.iconspng.com/images/pepe/pepe.jpg"
+      icon: "logo.ico"
     });
   }
 });
