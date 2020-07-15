@@ -105,6 +105,9 @@ app.post('/addauction',function(req,res,next){
         client.set("auctionNum",id+1);
         res.redirect('/');
       });
+      client.sadd( "auctions", auctionkey, function(err,res) {
+         console.log("Added Auction");
+      });
   });
 
 });
@@ -375,6 +378,18 @@ app.post('/getimage',function(req,res,next){
     if(!obj){
       console.log('User doesnt exist');
       res.redirect('login.html');
+    }
+    else{
+      req.session.userphoto=obj.userphoto;
+      res.json(req.session.userphoto);
+    }
+  });
+});
+app.get('/getuser',function(req,res,next){
+  client.hgetall(req.body.query,function(err,obj){
+    if(!obj){
+      console.log('User doesnt exist');
+      res.redirect('/');
     }
     else{
       req.session.userphoto=obj.userphoto;
